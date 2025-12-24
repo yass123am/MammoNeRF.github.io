@@ -6,11 +6,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function init() {
     const containers = [];
-    for (let i = 1; i <= 1; i++) {
+    for (let i = 1; i <= 3; i++) {
       containers.push(document.getElementById(`mesh-container-${i}`));
     }
 
     const modelPaths = [
+      './static/mesh/nerf_3d_grid.ply',
+      './static/mesh/nerf_3d_grid.ply',
       './static/mesh/nerf_3d_grid.ply',
     ];
 
