@@ -17,8 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const modelPaths = [
-      './static/mesh/new_v.ply',
-      './static/mesh/new_v.ply',
+      './static/mesh/Volume_1.ply',
+      './static/mesh/nerf_3d_grid.ply',
       './static/mesh/new_v.ply',
     ];
 
