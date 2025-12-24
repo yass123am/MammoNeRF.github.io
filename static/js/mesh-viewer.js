@@ -1,4 +1,3 @@
-<script>
 document.addEventListener("DOMContentLoaded", function () {
   const viewers = [];
   const sceneGroups = [[], [], []];
@@ -163,4 +162,3 @@ document.addEventListener("DOMContentLoaded", function () {
 
   init();
 });
-</script>
