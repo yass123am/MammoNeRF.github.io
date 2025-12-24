@@ -6,21 +6,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function init() {
     const containers = [];
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 12; i++) {
       containers.push(document.getElementById(`mesh-container-${i}`));
     }
 
     const modelPaths = [
+     './static/mesh/Volume_1.ply',
       './static/mesh/nerf_3d_grid.ply',
-      './static/mesh/nerf_3d_grid.ply',
-      './static/mesh/nerf_3d_grid.ply',
+      './static/mesh/new_v.ply',
     ];
 
     containers.forEach((container, i) => {
       if (!container) return;
 
-      const sceneIndex = Math.floor(i / 1);
-      const viewerIndex = i % 1;
+      const sceneIndex = Math.floor(i / 4);
+      const viewerIndex = i % 4;
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xffffff);
