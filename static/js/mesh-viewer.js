@@ -1,108 +1,170 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
+  const viewers = [];
+  const sceneGroups = [[], [], []];
+  window.renderers = [];
+  let isUpdating = false;
 
-  const container = document.getElementById("viewer");
+  function init() {
+    const containers = [];
+    for (let i = 1; i <= 3; i++) {
+      containers.push(document.getElementById(`mesh-container-${i}`));
+    }
 
-  /* ======================
-     SCENE
-  ====================== */
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xffffff);
+    const modelPaths = [
+      './static/mesh/nerf_3d_grid.ply',
+      './static/mesh/nerf_3d_grid.ply',
+      './static/mesh/new_v.ply',
+    ];
 
-  /* ======================
-     CAMERA
-  ====================== */
-  const camera = new THREE.PerspectiveCamera(
-    60,
-    container.clientWidth / container.clientHeight,
-    0.01,
-    1e7
-  );
+    containers.forEach((container, i) => {
+      if (!container) return;
 
-  /* ======================
-     RENDERER
-  ====================== */
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(container.clientWidth, container.clientHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  container.appendChild(renderer.domElement);
+      const sceneIndex = Math.floor(i / 1);
+      const viewerIndex = i % 1;
 
-  /* ======================
-     CONTROLS
-  ====================== */
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xffffff);
 
-  /* ======================
-     LIGHTING (MeshLab-like)
-  ====================== */
-  scene.add(new THREE.AmbientLight(0xffffff, 1.0));
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.6));
+      const camera = new THREE.PerspectiveCamera(
+        60,
+        container.clientWidth / container.clientHeight,
+        0.01,
+        100
+      );
+      camera.position.set(0, 0, 2);
 
-  /* ======================
-     LOAD PLY (NO MODIFICATION)
-  ====================== */
-  const loader = new THREE.PLYLoader();
-  loader.load(
-    "./model.ply",   // 🔁 CHANGE THIS PATH
-    geometry => {
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
 
-      // Only compute normals if missing
-      if (!geometry.attributes.normal) {
-        geometry.computeVertexNormals();
-      }
+      // ---- MeshLab-like renderer settings ----
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.NoToneMapping;
+      renderer.physicallyCorrectLights = false;
 
-      const material = geometry.attributes.color
-        ? new THREE.MeshStandardMaterial({
+      container.appendChild(renderer.domElement);
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      // ❌ NO LIGHTS (MeshLab-style)
+
+      const viewer = {
+        scene,
+        camera,
+        renderer,
+        controls,
+        container,
+        sceneIndex,
+        viewerIndex
+      };
+
+      viewers.push(viewer);
+      sceneGroups[sceneIndex].push(viewer);
+      window.renderers.push(renderer);
+
+      const loader = new THREE.PLYLoader();
+      loader.load(
+        modelPaths[i],
+        geometry => {
+
+          // ❌ DO NOT recompute normals (keeps original data)
+          geometry.computeBoundingBox();
+
+          // Centering (optional – remove if you want absolute fidelity)
+          const center = geometry.boundingBox.getCenter(new THREE.Vector3());
+          geometry.translate(-center.x, -center.y, -center.z);
+
+          // Scale to view nicely (optional)
+          const size = geometry.boundingBox.getSize(new THREE.Vector3());
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const scale = 1.5 / maxDim;
+
+          // ---- MeshLab-style POINT rendering ----
+          const material = new THREE.PointsMaterial({
+            size: 0.005,            // adjust if needed
             vertexColors: true,
-            side: THREE.DoubleSide
-          })
-        : new THREE.MeshStandardMaterial({
-            color: 0xaaaaaa,
-            side: THREE.DoubleSide
+            sizeAttenuation: true
           });
 
-      const mesh = new THREE.Mesh(geometry, material);
-      scene.add(mesh);
+          const points = new THREE.Points(geometry, material);
+          points.scale.setScalar(scale);
+          scene.add(points);
 
-      /* ---- Camera framing ONLY (mesh untouched) ---- */
-      geometry.computeBoundingBox();
-      const box = geometry.boundingBox;
+          // Camera setup
+          const radius = 2.5;
+          camera.position.set(radius, radius * 0.5, radius);
+          camera.lookAt(0, 0, 0);
+          controls.target.set(0, 0, 0);
+          controls.update();
+        },
+        undefined,
+        error => {
+          console.error(`Failed to load mesh ${modelPaths[i]}`, error);
+          const fallback = new THREE.Points(
+            new THREE.BoxGeometry(1, 1, 1),
+            new THREE.PointsMaterial({ color: 0xff6b6b, size: 0.02 })
+          );
+          scene.add(fallback);
+        }
+      );
+    });
 
-      const size = box.getSize(new THREE.Vector3()).length();
-      const center = box.getCenter(new THREE.Vector3());
+    setTimeout(setupCameraSync, 1000);
+    animate();
+  }
 
-      const distance = size * 1.2;
+  function setupCameraSync() {
+    viewers.forEach(viewer => {
+      viewer.controls.addEventListener('change', () => {
+        if (!isUpdating) {
+          syncCamerasInScene(viewer.sceneIndex, viewer.viewerIndex);
+        }
+      });
+    });
+  }
 
-      camera.position.copy(center).add(new THREE.Vector3(distance, distance, distance));
-      camera.lookAt(center);
+  function syncCamerasInScene(sceneIndex, sourceViewerIndex) {
+    if (isUpdating) return;
+    isUpdating = true;
 
-      controls.target.copy(center);
-      controls.update();
-    },
-    undefined,
-    error => {
-      console.error("PLY load error:", error);
-    }
-  );
+    const sceneViewers = sceneGroups[sceneIndex];
+    const source = sceneViewers[sourceViewerIndex];
+    if (!source) return;
 
-  /* ======================
-     ANIMATION LOOP
-  ====================== */
+    sceneViewers.forEach((viewer, index) => {
+      if (index !== sourceViewerIndex) {
+        viewer.camera.position.copy(source.camera.position);
+        viewer.camera.rotation.copy(source.camera.rotation);
+        viewer.controls.target.copy(source.controls.target);
+        viewer.controls.update();
+      }
+    });
+
+    isUpdating = false;
+  }
+
   function animate() {
     requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
+    viewers.forEach(viewer => {
+      if (viewer.container.offsetParent !== null) {
+        viewer.controls.update();
+        viewer.renderer.render(viewer.scene, viewer.camera);
+      }
+    });
   }
-  animate();
 
-  /* ======================
-     RESIZE HANDLER
-  ====================== */
-  window.addEventListener("resize", () => {
-    camera.aspect = container.clientWidth / container.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
+  window.addEventListener('resize', () => {
+    viewers.forEach((viewer, i) => {
+      const container = document.getElementById(`mesh-container-${i + 1}`);
+      if (container && container.offsetParent !== null) {
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        viewer.camera.aspect = width / height;
+        viewer.camera.updateProjectionMatrix();
+        viewer.renderer.setSize(width, height);
+      }
+    });
   });
 
+  init();
 });
