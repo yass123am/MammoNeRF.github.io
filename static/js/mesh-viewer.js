@@ -1,31 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>PLY Viewer (MeshLab Style)</title>
-  <style>
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #ffffff;
-    }
-    #viewer {
-      width: 100%;
-      height: 100%;
-    }
-  </style>
-</head>
-<body>
-
-<div id="viewer"></div>
-
-<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
-<script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://unpkg.com/three@0.158.0/examples/js/loaders/PLYLoader.js"></script>
-
-<script>
 document.addEventListener("DOMContentLoaded", () => {
 
   const container = document.getElementById("viewer");
@@ -134,7 +106,3 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-</script>
-
-</body>
-</html>
