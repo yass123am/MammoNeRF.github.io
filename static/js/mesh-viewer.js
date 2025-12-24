@@ -7,14 +7,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function init() {
     const containers = [];
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 1; i++) {
       containers.push(document.getElementById(`mesh-container-${i}`));
     }
 
     const modelPaths = [
-      './static/mesh/Volume_1.ply',
       './static/mesh/nerf_3d_grid.ply',
-      './static/mesh/new_v.ply',
     ];
 
     containers.forEach((container, i) => {
