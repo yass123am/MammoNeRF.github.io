@@ -1,12 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
   const viewers = [];
   const sceneGroups = [[], [], []];
+  const pointMaterials = [];   // ⭐ store point materials
   window.renderers = [];
   let isUpdating = false;
 
   function init() {
     const containers = [];
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 3; i++) {
       containers.push(document.getElementById(`mesh-container-${i}`));
     }
 
@@ -19,8 +20,8 @@ document.addEventListener("DOMContentLoaded", function () {
     containers.forEach((container, i) => {
       if (!container) return;
 
-      const sceneIndex = Math.floor(i / 4);
-      const viewerIndex = i % 4;
+      const sceneIndex = Math.floor(i / 1);
+      const viewerIndex = i % 1;
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xffffff);
@@ -39,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      // Lighting (ambient only is usually best for point clouds)
       scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 
       const viewer = {
@@ -62,29 +62,27 @@ document.addEventListener("DOMContentLoaded", function () {
         geometry => {
           geometry.computeBoundingBox();
 
-          // Center geometry
           const center = geometry.boundingBox.getCenter(new THREE.Vector3());
           geometry.translate(-center.x, -center.y, -center.z);
 
-          // Scale geometry
           const size = geometry.boundingBox.getSize(new THREE.Vector3());
           const maxDim = Math.max(size.x, size.y, size.z);
           const targetSize = 1.5;
           const scale = targetSize / maxDim;
 
-          // Point cloud material
           const material = new THREE.PointsMaterial({
-            size: 0.01,
+            size: 0.005,                // ⭐ default point size
             sizeAttenuation: true,
             vertexColors: !!geometry.attributes.color,
             color: geometry.attributes.color ? undefined : 0x3366cc
           });
 
+          pointMaterials.push(material);   // ⭐ store material
+
           const points = new THREE.Points(geometry, material);
           points.scale.setScalar(scale);
           scene.add(points);
 
-          // Camera setup
           const radius = 2.5;
           camera.position.set(radius, radius * 0.5, radius);
           camera.lookAt(0, 0, 0);
@@ -94,13 +92,6 @@ document.addEventListener("DOMContentLoaded", function () {
         undefined,
         error => {
           console.error(`Failed to load ${modelPaths[i]}`, error);
-          const fallback = new THREE.Points(
-            new THREE.BufferGeometry().setFromPoints([
-              new THREE.Vector3(0, 0, 0)
-            ]),
-            new THREE.PointsMaterial({ size: 0.1, color: 0xff0000 })
-          );
-          scene.add(fallback);
         }
       );
     });
@@ -161,6 +152,14 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+
+  // ⭐ GLOBAL POINT SIZE CONTROL
+  window.setPointSize = function (size) {
+    pointMaterials.forEach(mat => {
+      mat.size = size;
+      mat.needsUpdate = true;
+    });
+  };
 
   init();
 });
