@@ -29,14 +29,14 @@ document.addEventListener("DOMContentLoaded", function () {
         60,
         container.clientWidth / container.clientHeight,
         0.01,
-        100
+        1000
       );
-      camera.position.set(0, 0, 2);
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      const renderer = new THREE.WebGLRenderer({ antialias: false });
       renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
 
-      // ---- MeshLab-like renderer settings ----
+      // ---- MeshLab-faithful renderer settings ----
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.NoToneMapping;
       renderer.physicallyCorrectLights = false;
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      // ❌ NO LIGHTS (MeshLab-style)
+      // ❌ NO LIGHTS
 
       const viewer = {
         scene,
@@ -67,44 +67,38 @@ document.addEventListener("DOMContentLoaded", function () {
         modelPaths[i],
         geometry => {
 
-          // ❌ DO NOT recompute normals (keeps original data)
+          // ---- DO NOT TOUCH GEOMETRY DATA ----
           geometry.computeBoundingBox();
+          geometry.setUsage(THREE.StaticDrawUsage);
 
-          // Centering (optional – remove if you want absolute fidelity)
+          // Optional centering (comment out for raw coordinates)
           const center = geometry.boundingBox.getCenter(new THREE.Vector3());
           geometry.translate(-center.x, -center.y, -center.z);
 
-          // Scale to view nicely (optional)
           const size = geometry.boundingBox.getSize(new THREE.Vector3());
           const maxDim = Math.max(size.x, size.y, size.z);
-          const scale = 1.5 / maxDim;
 
-          // ---- MeshLab-style POINT rendering ----
+          // ---- MeshLab-style point material ----
           const material = new THREE.PointsMaterial({
-            size: 0.005,            // adjust if needed
+            size: 1.5,               // MeshLab default look
+            sizeAttenuation: false,  // screen-space points
             vertexColors: true,
-            sizeAttenuation: true
+            depthWrite: false
           });
 
           const points = new THREE.Points(geometry, material);
-          points.scale.setScalar(scale);
           scene.add(points);
 
-          // Camera setup
-          const radius = 2.5;
-          camera.position.set(radius, radius * 0.5, radius);
+          // Camera framing
+          const dist = maxDim * 1.5;
+          camera.position.set(dist, dist * 0.6, dist);
           camera.lookAt(0, 0, 0);
           controls.target.set(0, 0, 0);
           controls.update();
         },
         undefined,
         error => {
-          console.error(`Failed to load mesh ${modelPaths[i]}`, error);
-          const fallback = new THREE.Points(
-            new THREE.BoxGeometry(1, 1, 1),
-            new THREE.PointsMaterial({ color: 0xff6b6b, size: 0.02 })
-          );
-          scene.add(fallback);
+          console.error(`Failed to load PLY ${modelPaths[i]}`, error);
         }
       );
     });
