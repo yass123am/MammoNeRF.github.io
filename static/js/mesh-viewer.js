@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const modelPaths = [
-      './static/mesh/volume_1.ply',
-      './static/mesh/nerf_3d_grid.ply',
+      './static/mesh/Volume_1.ply',
+      './static/mesh/nerf_3D_grid.ply',
       './static/mesh/new_v.ply',
     ];
 
@@ -53,24 +53,30 @@ document.addEventListener("DOMContentLoaded", function () {
       loader.load(
         modelPaths[i],
         geometry => {
-          geometry.computeVertexNormals();
+          // ❌ NO vertex normals for voxel grids
           geometry.computeBoundingBox();
 
+          // Center voxel grid
           const center = geometry.boundingBox.getCenter(new THREE.Vector3());
           geometry.translate(-center.x, -center.y, -center.z);
 
+          // Normalize scale
           const size = geometry.boundingBox.getSize(new THREE.Vector3());
           const maxDim = Math.max(size.x, size.y, size.z);
           const targetSize = 1.5;
           const scale = targetSize / maxDim;
 
-          const material = geometry.attributes.color
-            ? new THREE.MeshLambertMaterial({ vertexColors: true })
-            : new THREE.MeshLambertMaterial({ color: 0x8888aa });
+          // ✅ Points material for voxel grids
+          const material = new THREE.PointsMaterial({
+            size: 0.02, // ← adjust voxel size here
+            sizeAttenuation: true,
+            vertexColors: !!geometry.attributes.color,
+            color: geometry.attributes.color ? undefined : 0x3366cc
+          });
 
-          const mesh = new THREE.Mesh(geometry, material);
-          mesh.scale.setScalar(scale);
-          scene.add(mesh);
+          const points = new THREE.Points(geometry, material);
+          points.scale.setScalar(scale);
+          scene.add(points);
 
           const radius = 2.5;
           camera.position.set(radius, radius * 0.5, radius);
@@ -80,10 +86,10 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         undefined,
         error => {
-          console.error(`Failed to load mesh ${modelPaths[i]}`, error);
-          const fallback = new THREE.Mesh(
-            new THREE.BoxGeometry(1, 1, 1),
-            new THREE.MeshLambertMaterial({ color: 0xff6b6b })
+          console.error(`Failed to load voxel grid ${modelPaths[i]}`, error);
+          const fallback = new THREE.Points(
+            new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0)]),
+            new THREE.PointsMaterial({ color: 0xff6b6b, size: 0.1 })
           );
           scene.add(fallback);
         }
@@ -95,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function setupCameraSync() {
-    viewers.forEach((viewer, index) => {
+    viewers.forEach(viewer => {
       viewer.controls.addEventListener('change', () => {
         if (!isUpdating) {
           syncCamerasInScene(viewer.sceneIndex, viewer.viewerIndex);
