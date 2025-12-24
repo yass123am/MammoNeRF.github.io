@@ -29,35 +29,22 @@ document.addEventListener("DOMContentLoaded", function () {
         60,
         container.clientWidth / container.clientHeight,
         0.01,
-        1000
+        100
       );
+      camera.position.set(0, 0, 2);
 
-      const renderer = new THREE.WebGLRenderer({ antialias: false });
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
-
-      // ---- MeshLab-faithful renderer settings ----
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.NoToneMapping;
-      renderer.physicallyCorrectLights = false;
-
       container.appendChild(renderer.domElement);
 
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      // ❌ NO LIGHTS
+      scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+      scene.add(new THREE.DirectionalLight(0xffffff, 0.4).position.set(5, 5, 5));
+      scene.add(new THREE.DirectionalLight(0xffffff, 0.4).position.set(-5, 5, -5));
 
-      const viewer = {
-        scene,
-        camera,
-        renderer,
-        controls,
-        container,
-        sceneIndex,
-        viewerIndex
-      };
-
+      const viewer = { scene, camera, renderer, controls, container, sceneIndex, viewerIndex };
       viewers.push(viewer);
       sceneGroups[sceneIndex].push(viewer);
       window.renderers.push(renderer);
@@ -66,39 +53,39 @@ document.addEventListener("DOMContentLoaded", function () {
       loader.load(
         modelPaths[i],
         geometry => {
-
-          // ---- DO NOT TOUCH GEOMETRY DATA ----
+          geometry.computeVertexNormals();
           geometry.computeBoundingBox();
-          geometry.setUsage(THREE.StaticDrawUsage);
 
-          // Optional centering (comment out for raw coordinates)
           const center = geometry.boundingBox.getCenter(new THREE.Vector3());
           geometry.translate(-center.x, -center.y, -center.z);
 
           const size = geometry.boundingBox.getSize(new THREE.Vector3());
           const maxDim = Math.max(size.x, size.y, size.z);
+          const targetSize = 1.5;
+          const scale = targetSize / maxDim;
 
-          // ---- MeshLab-style point material ----
-          const material = new THREE.PointsMaterial({
-            size: 1.5,               // MeshLab default look
-            sizeAttenuation: false,  // screen-space points
-            vertexColors: true,
-            depthWrite: false
-          });
+          const material = geometry.attributes.color
+            ? new THREE.MeshLambertMaterial({ vertexColors: true })
+            : new THREE.MeshLambertMaterial({ color: 0x8888aa });
 
-          const points = new THREE.Points(geometry, material);
-          scene.add(points);
+          const mesh = new THREE.Mesh(geometry, material);
+          mesh.scale.setScalar(scale);
+          scene.add(mesh);
 
-          // Camera framing
-          const dist = maxDim * 1.5;
-          camera.position.set(dist, dist * 0.6, dist);
+          const radius = 2.5;
+          camera.position.set(radius, radius * 0.5, radius);
           camera.lookAt(0, 0, 0);
           controls.target.set(0, 0, 0);
           controls.update();
         },
         undefined,
         error => {
-          console.error(`Failed to load PLY ${modelPaths[i]}`, error);
+          console.error(`Failed to load mesh ${modelPaths[i]}`, error);
+          const fallback = new THREE.Mesh(
+            new THREE.BoxGeometry(1, 1, 1),
+            new THREE.MeshLambertMaterial({ color: 0xff6b6b })
+          );
+          scene.add(fallback);
         }
       );
     });
@@ -108,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function setupCameraSync() {
-    viewers.forEach(viewer => {
+    viewers.forEach((viewer, index) => {
       viewer.controls.addEventListener('change', () => {
         if (!isUpdating) {
           syncCamerasInScene(viewer.sceneIndex, viewer.viewerIndex);
