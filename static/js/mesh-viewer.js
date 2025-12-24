@@ -4,9 +4,15 @@ document.addEventListener("DOMContentLoaded", function () {
   window.renderers = [];
   let isUpdating = false;
 
+  // ====== VOXEL TWEAKS ======
+  const VOXEL_SIZE = 0.015;     // Smaller = faster + cleaner
+  const VOXEL_OPACITY = 0.9;    // Transparency for depth clarity
+  const TARGET_SIZE = 1.5;      // Normalized object size
+  // =========================
+
   function init() {
     const containers = [];
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 12; i++) {
       containers.push(document.getElementById(`mesh-container-${i}`));
     }
 
@@ -19,8 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
     containers.forEach((container, i) => {
       if (!container) return;
 
-      const sceneIndex = Math.floor(i / 1);
-      const viewerIndex = i % 1;
+      const sceneIndex = Math.floor(i / 4);
+      const viewerIndex = i % 4;
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xffffff);
@@ -31,7 +37,6 @@ document.addEventListener("DOMContentLoaded", function () {
         0.01,
         100
       );
-      camera.position.set(0, 0, 2);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(container.clientWidth, container.clientHeight);
@@ -44,7 +49,16 @@ document.addEventListener("DOMContentLoaded", function () {
       scene.add(new THREE.DirectionalLight(0xffffff, 0.4).position.set(5, 5, 5));
       scene.add(new THREE.DirectionalLight(0xffffff, 0.4).position.set(-5, 5, -5));
 
-      const viewer = { scene, camera, renderer, controls, container, sceneIndex, viewerIndex };
+      const viewer = {
+        scene,
+        camera,
+        renderer,
+        controls,
+        container,
+        sceneIndex,
+        viewerIndex
+      };
+
       viewers.push(viewer);
       sceneGroups[sceneIndex].push(viewer);
       window.renderers.push(renderer);
@@ -53,23 +67,53 @@ document.addEventListener("DOMContentLoaded", function () {
       loader.load(
         modelPaths[i],
         geometry => {
-          // ❌ NO vertex normals for voxel grids
+          // ====== VOXEL GEOMETRY PROCESSING ======
           geometry.computeBoundingBox();
 
-          // Center voxel grid
           const center = geometry.boundingBox.getCenter(new THREE.Vector3());
           geometry.translate(-center.x, -center.y, -center.z);
 
-          // Normalize scale
           const size = geometry.boundingBox.getSize(new THREE.Vector3());
           const maxDim = Math.max(size.x, size.y, size.z);
-          const targetSize = 1.5;
-          const scale = targetSize / maxDim;
+          const scale = TARGET_SIZE / maxDim;
 
-          // ✅ Points material for voxel grids
+          // ====== OPTIONAL PERFORMANCE DECIMATION ======
+          // Uncomment if PLY is extremely dense
+          /*
+          const stride = 2;
+          const pos = geometry.attributes.position;
+          const col = geometry.attributes.color;
+
+          const newPos = [];
+          const newCol = [];
+
+          for (let i = 0; i < pos.count; i += stride) {
+            newPos.push(pos.getX(i), pos.getY(i), pos.getZ(i));
+            if (col) {
+              newCol.push(col.getX(i), col.getY(i), col.getZ(i));
+            }
+          }
+
+          geometry.setAttribute(
+            'position',
+            new THREE.Float32BufferAttribute(newPos, 3)
+          );
+
+          if (col) {
+            geometry.setAttribute(
+              'color',
+              new THREE.Float32BufferAttribute(newCol, 3)
+            );
+          }
+          */
+          // ======================================
+
           const material = new THREE.PointsMaterial({
-            size: 0.02, // ← adjust voxel size here
+            size: VOXEL_SIZE,
             sizeAttenuation: true,
+            transparent: true,
+            opacity: VOXEL_OPACITY,
+            depthWrite: false,
             vertexColors: !!geometry.attributes.color,
             color: geometry.attributes.color ? undefined : 0x3366cc
           });
