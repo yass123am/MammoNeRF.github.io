@@ -8,7 +8,7 @@ We propose a novel approach for reconstructing a 3D volumetric representation of
 MammoNeRF is trained CC and MLO views annotated with the corresponding binary lesion masks. To enforce cross-view alignment, we introduce a lesion consistency loss in addition to the photometric loss, encouraging the model to estimate consistent poses across both views. This enables the reconstruction of pseudo ground-truth 3D lesion bounding boxes (3DPB) and 3D volumetric breast representations. Without this constraint, traditional NeRF models tend to reconstruct the same lesion at inconsistent spatial locations across views, resulting in incoherent lesion geometry. MammoNeRF jointly optimizes NeRF parameters, camera poses, and lesion centroids within a unified framework.
 
 ### Architecture
-<p align="center"> <img src="Demo/MammoNeRF_arch.png" style="height:260px" /> <p align="center"> <img src="Demo/lesion_loss.png" style="height:260px" /> 
+<p align="center"> <img src="Demo/MammoNeRF_arch (1).png" style="height:260px" /> <p align="center"> <img src="Demo/lesion_loss.png" style="height:260px" /> 
 
 ### Coordinate System
 The initial camera origin for the CC view is placed at the origin and oriented to look in the negative y-direction. The MLO view is initialized by rotating the CC view by 45 degrees around the y-axis.
