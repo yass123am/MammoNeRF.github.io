@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="MammoNeRF">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MammoNeRF</title>
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <!-- Three.js and loaders -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/PLYLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+</head>
+<body>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">MammoNeRF: Neural Radiance Fields for Mammography Imaging</h1>
+          <div class="is-size-6 publication-authors">
+            
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://github.com/yass123am/MammoNeRF" class="external-link button is-normal">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+              <a href="https://drive.google.com/file/d/1Sd7NFgMKIzwDMY1-0anWhdz6Tqn-OyfD/view" class="external-link button is-normal">
+                <span class="icon">
+                  <i class="fas fa-database"></i>
+                </span>
+                <span>Dataset</span>
+              </a>
+            </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+            We propose a novel approach for reconstructing a 3D volumetric representation of breast tissue from 2D mammograms (CC and MLO). MammoNeRF is trained CC and MLO views annotated with the corresponding binary lesion masks. To enforce cross-view alignment, we introduce a lesion consistency loss in addition to the photometric loss, encouraging the model to estimate consistent poses across both views. This enables the reconstruction of pseudo ground-truth 3D lesion bounding boxes (3DPB) and 3D volumetric breast representations. Without this constraint, traditional NeRF models tend to reconstruct the same lesion at inconsistent spatial locations across views, resulting in incoherent lesion geometry. MammoNeRF jointly optimizes NeRF parameters, camera poses, and lesion centroids within a unified framework.            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-4 has-text-centered">Method Overview</h2>
+      <figure class="image">
+        <img src="./static/images/MammoNeRF_arch.png" alt="MammoNeRF Architecture">
+        <figcaption class="has-text-centered is-italic mt-2">
+          MammoNeRF Architecture.
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <figure class="image">
+        <img src="./static/images/lesion_loss.png" alt="MammoNeRF Architecture">
+        <figcaption class="has-text-centered is-italic mt-2">
+          Lesion consistency Loss.
+        </figcaption>
+      </figure>
+      <div class="content mt-4">
+        <p>
+          <strong>Lesion consistency Loss.</strong> 
+Convergence of the centroids of sampled points for each view is observed when incorporating the lesion consistency loss, in
+contrast to using only the photometric loss, where lesions remain misaligned. As training progresses, both the camera parameters and the
+centroids of sampled points are optimized, leading to improved lesion alignment across views.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-4 has-text-centered">Quantitative Evaluation</h2>
+      <figure class="image">
+        <img src="./static/images/results_tables.png" alt="Quantitative Evaluation Table" style="max-width: 100%; height: auto;">
+        <figcaption class="has-text-centered is-italic mt-2">
+Quantitative evaluation of novel view synthesis on CBIS-DDSM and INbreast datasets using PSNR and SSIM.
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<div class="container is-max-desktop scene-selector mb-5">
+  <div class="columns is-vcentered is-centered">
+    <div class="column is-narrow has-text-right">
+      <label for="scene-select" class="is-size-5 pr-3">Select Scene:</label>
+    </div>
+    <div class="column is-narrow">
+      <div class="select is-medium">
+        <select id="scene-select">
+          <option value="1" selected>Example 1</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="hero is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-4 has-text-centered">Qualitative Evaluation</h2>
+
+      <!-- Scene 1 -->
+      <div id="scene-1" class="scene-grid active">
+        <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+          <div style="height: 70%; text-align: center;">
+            <figure class="qualitative-figure" style="text-align: center; border: 1px solid #ddd;">
+              <img src="./static/mesh/cc+mlo+mask.png">
+            </figure>
+            <p class="has-text-weight-semibold mt-2">ground-truth: (CC + MLO + Masks)</p>
+          </div>
+          <div style="width: 48%; text-align: center;">
+            <figure class="qualitative-figure" style="text-align: center; border: 1px solid #ddd;">
+              <img src="./static/mesh/nerfmm_results_bb.png">
+            </figure>
+            <p class="has-text-weight-semibold mt-2">NeRFmm</p>
+          </div>
+          <div style="width: 48%; text-align: center;">
+            <figure class="qualitative-figure" style="text-align: center; border: 1px solid #ddd;">
+              <img src="./static/mesh/Mamo_results_bb.png">
+            </figure>
+            <p class="has-text-weight-semibold mt-2">MammoNeRF (ours)</p>
+          </div>
+          <div style="width: 48%; text-align: center;">
+            <div id="mesh-container-1" style="width: 100%; height: 400px; border: 1px solid #ddd;"></div>
+            <p class="has-text-weight-semibold mt-2">3D volume</p>
+          </div>
+        </div>  
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+        <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website adapted from the Nerfies templates, which is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            If you use the <a href="https://github.com/spla-tam/spla-tam.github.io">source code</a> of this website,
+            please also link back to the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies source code</a> in your footer.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const selector = document.getElementById("scene-select");
+
+  // Show scene 1 initially
+  document.getElementById("scene-1").style.display = "block";
+  document.getElementById("scene-2").style.display = "none";
+  document.getElementById("scene-3").style.display = "none";
+
+  selector.addEventListener("change", function () {
+    const selected = this.value;
+
+    // Hide all scenes
+    for (let i = 1; i <= 3; i++) {
+      document.getElementById(`scene-${i}`).style.display = "none";
+    }
+
+    // Show the selected one
+    document.getElementById(`scene-${selected}`).style.display = "block";
+
+    // Trigger resize for newly visible renderers
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
+  });
+});
+</script>
+
+<style>
+.scene-grid {
+  display: none;
+}
+.scene-grid.active {
+  display: block;
+}
+</style>
+
+<!-- Load the mesh viewer script last -->
+<script src="./static/js/mesh-viewer.js"></script>
+
+</body>
+</html>

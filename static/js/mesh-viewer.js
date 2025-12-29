@@ -6,30 +6,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function init() {
     const containers = [];
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 3; i++) {
       containers.push(document.getElementById(`mesh-container-${i}`));
     }
 
     const modelPaths = [
-      './static/mesh/0080_Kinect.ply',
-      './static/mesh/0080_PDNet.ply',
-      './static/mesh/0080_MirrorESLAM.ply',
-      './static/mesh/0080_GT.ply',
-      './static/mesh/0112_Kinect.ply',
-      './static/mesh/0112_PDNet.ply',
-      './static/mesh/0112_MirrorESLAM.ply',
-      './static/mesh/0112_GT.ply',
-      './static/mesh/0146_Kinect.ply',
-      './static/mesh/0146_PDNet.ply',
-      './static/mesh/0146_MirrorESLAM.ply',
-      './static/mesh/0146_GT.ply',
+     './static/mesh/Volume_1.ply',
+      './static/mesh/nerf_3d_grid.ply',
+      './static/mesh/new_v.ply',
     ];
 
     containers.forEach((container, i) => {
       if (!container) return;
 
-      const sceneIndex = Math.floor(i / 4);
-      const viewerIndex = i % 4;
+      const sceneIndex = Math.floor(i / 1);
+      const viewerIndex = i % 1;
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xffffff);
@@ -37,10 +28,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const camera = new THREE.PerspectiveCamera(
         60,
         container.clientWidth / container.clientHeight,
-        0.01,
-        100
+        0.001,
+        1000
       );
-      camera.position.set(0, 0, 2);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(container.clientWidth, container.clientHeight);
@@ -49,11 +39,19 @@ document.addEventListener("DOMContentLoaded", function () {
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-      scene.add(new THREE.DirectionalLight(0xffffff, 0.4).position.set(5, 5, 5));
-      scene.add(new THREE.DirectionalLight(0xffffff, 0.4).position.set(-5, 5, -5));
+      // Lighting (ambient only is usually best for point clouds)
+      scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 
-      const viewer = { scene, camera, renderer, controls, container, sceneIndex, viewerIndex };
+      const viewer = {
+        scene,
+        camera,
+        renderer,
+        controls,
+        container,
+        sceneIndex,
+        viewerIndex
+      };
+
       viewers.push(viewer);
       sceneGroups[sceneIndex].push(viewer);
       window.renderers.push(renderer);
@@ -62,25 +60,31 @@ document.addEventListener("DOMContentLoaded", function () {
       loader.load(
         modelPaths[i],
         geometry => {
-          geometry.computeVertexNormals();
           geometry.computeBoundingBox();
 
+          // Center geometry
           const center = geometry.boundingBox.getCenter(new THREE.Vector3());
           geometry.translate(-center.x, -center.y, -center.z);
 
+          // Scale geometry
           const size = geometry.boundingBox.getSize(new THREE.Vector3());
           const maxDim = Math.max(size.x, size.y, size.z);
           const targetSize = 1.5;
           const scale = targetSize / maxDim;
 
-          const material = geometry.attributes.color
-            ? new THREE.MeshLambertMaterial({ vertexColors: true })
-            : new THREE.MeshLambertMaterial({ color: 0x8888aa });
+          // Point cloud material
+          const material = new THREE.PointsMaterial({
+            size: 0.01,
+            sizeAttenuation: true,
+            vertexColors: !!geometry.attributes.color,
+            color: geometry.attributes.color ? undefined : 0x3366cc
+          });
 
-          const mesh = new THREE.Mesh(geometry, material);
-          mesh.scale.setScalar(scale);
-          scene.add(mesh);
+          const points = new THREE.Points(geometry, material);
+          points.scale.setScalar(scale);
+          scene.add(points);
 
+          // Camera setup
           const radius = 2.5;
           camera.position.set(radius, radius * 0.5, radius);
           camera.lookAt(0, 0, 0);
@@ -89,10 +93,12 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         undefined,
         error => {
-          console.error(`Failed to load mesh ${modelPaths[i]}`, error);
-          const fallback = new THREE.Mesh(
-            new THREE.BoxGeometry(1, 1, 1),
-            new THREE.MeshLambertMaterial({ color: 0xff6b6b })
+          console.error(`Failed to load ${modelPaths[i]}`, error);
+          const fallback = new THREE.Points(
+            new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(0, 0, 0)
+            ]),
+            new THREE.PointsMaterial({ size: 0.1, color: 0xff0000 })
           );
           scene.add(fallback);
         }
@@ -104,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function setupCameraSync() {
-    viewers.forEach((viewer, index) => {
+    viewers.forEach(viewer => {
       viewer.controls.addEventListener('change', () => {
         if (!isUpdating) {
           syncCamerasInScene(viewer.sceneIndex, viewer.viewerIndex);
@@ -124,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
     sceneViewers.forEach((viewer, index) => {
       if (index !== sourceViewerIndex) {
         viewer.camera.position.copy(source.camera.position);
-        viewer.camera.rotation.copy(source.camera.rotation);
+        viewer.camera.quaternion.copy(source.camera.quaternion);
         viewer.controls.target.copy(source.controls.target);
         viewer.controls.update();
       }
@@ -147,11 +153,11 @@ document.addEventListener("DOMContentLoaded", function () {
     viewers.forEach((viewer, i) => {
       const container = document.getElementById(`mesh-container-${i + 1}`);
       if (container && container.offsetParent !== null) {
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        viewer.camera.aspect = width / height;
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        viewer.camera.aspect = w / h;
         viewer.camera.updateProjectionMatrix();
-        viewer.renderer.setSize(width, height);
+        viewer.renderer.setSize(w, h);
       }
     });
   });

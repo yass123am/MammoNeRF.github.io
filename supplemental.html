@@ -1,0 +1,488 @@
+<html>
+<head>
+  <!-- <link rel = "icon" href = "assets/title_image.png" type = "image/x-icon"> -->
+        
+  <meta charset="utf-8">
+  <meta name="description"
+        content="MammoNeRF: Neural Radiance Fields for Mammography Imaging">
+  <meta name="keywords" content="Mammography, NeRF, 3D reconstruction, CC, MLO">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <meta property="og:image" content="assets/Thumbnail.png" />         -->
+  <title>MammoNeRF: Neural Radiance Fields for Mammography Imaging</title>
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+</head>
+<body>
+
+<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://spla-tam.github.io/">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+    </div>
+
+  </div>
+</nav> -->
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">Splat-SLAM: Dense RGB-D SLAM<br>via 3D Gaussian Splatting</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">CVPR Paper ID: 7620</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+        <div class="container is-max-desktop">
+        <div class="columns is-centered">
+      
+        <div class="column has-text-centered">
+          <div class="content">
+            <video id="s1_recon" autoplay controls muted loop playsinline height="100%">
+              <source src="./data/scannetpp/scannetpp_s1_recon.mp4"
+                      type="video/mp4">
+            </video>
+          </div>
+        </div>
+      
+        <div class="column has-text-centered">
+          <div class="content">
+            <video id="s1_nvs" autoplay controls muted loop playsinline height="100%">
+              <source src="./data/scannetpp/scannetpp_s1_nvs_loop.mp4"
+                      type="video/mp4">
+            </video>
+          </div>
+        </div>
+
+        </div>
+        </div>
+      <h2 class="subtitle has-text-centered">
+        <span>Splat-SLAM enables precise camera tracking and high-fidelity reconstruction<br>in challenging real-world scenarios.</span>
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-small is-light">
+  <div class="hero-body">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Dense simultaneous localization and mapping (SLAM) is pivotal for embodied scene understanding.
+            Recent work has shown that 3D Gaussians enable high-quality reconstruction and real-time rendering of scenes using multiple posed cameras.
+            In this light, we show for the first time that representing a scene by a 3D Gaussian Splatting radiance field can enable dense SLAM using a single unposed monocular RGB-D camera.
+            Our method, Splat-SLAM, addresses the limitations of prior radiance field-based representations, including fast rendering and optimization, the ability to determine if areas have been previously mapped, and structured map expansion by adding more Gaussians.
+            In particular, we employ an online tracking and mapping pipeline while tailoring it to specifically use an underlying Gaussian representation and silhouette-guided optimization via differentiable rendering.
+            Extensive experiments on simulated and real-world data show that Splat-SLAM achieves up to 2 X state-of-the-art performance in camera pose estimation, map construction, and novel-view synthesis, demonstrating its superiority over existing approaches.
+          </p>
+        </div>
+      </div>
+    </div>
+    </div>
+    <!-- Paper video. -->
+    <!-- <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <a id="overview_video"></a>
+          <iframe
+            src="./data/">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div> -->
+    <!--/ Paper video. -->
+</section>
+
+<section class="hero is-small">
+  <div class="hero-body">
+  <div class="columns is-centered has-text-centered">
+    <div class="column">
+      <h2 class="title is-3">ScanNet++ S2</h2>
+      <p></p>
+    </div>
+  </div>
+
+  <div class="container is-max-desktop">
+  <div class="columns is-centered">
+
+  <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-4">Online Reconstruction</h2>
+      <video id="s2_recon" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/scannetpp/scannetpp_s2_recon.mp4"
+                type="video/mp4">
+      </video>
+      <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+    </div>
+  </div>
+
+  <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-4">3D Novel View Loop</h2>
+      <video id="s2_nvs" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/scannetpp/scannetpp_s2_nvs_loop.mp4"
+                type="video/mp4">
+      </video>
+      <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+    </div>
+  </div>
+
+  </div>
+  </div>
+</section>
+
+<section class="hero is-small is-light">
+  <div class="hero-body">
+  <div class="columns is-centered has-text-centered">
+    <div class="column">
+      <h2 class="title is-3">Replica Room 0 Novel View Renderings</h2>
+      <p></p>
+    </div>
+  </div>
+
+  <div class="container is-max-desktop">
+  <div class="columns is-centered">
+     
+  <!-- <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-5">PS (No GT Depth)</h2>
+      <video id="psg_r0" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/replica_nvs/point_slam_ngd/room0_rgb_ps.mp4"
+                type="video/mp4">
+      </video>
+    </div>
+  </div> -->
+
+  <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-5">Nice-SLAM</h2>
+      <video id="ns_r0" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/replica_nvs/nice_slam/room0_rgb_ns.mp4"
+                type="video/mp4">
+      </video>
+      <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+    </div>
+  </div>
+
+  <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-5">Point-SLAM</h2>
+      <video id="ps_r0" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/replica_nvs/point_slam/room0_rgb_ps.mp4"
+                type="video/mp4">
+      </video>
+      <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+    </div>
+  </div>
+
+  <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-5">Splat-SLAM</h2>
+      <video id="ss_r0" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/replica_nvs/splatam/room_0_rgb.mp4"
+                type="video/mp4">
+      </video>
+      <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+    </div>
+  </div>
+  </div>
+
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+       
+    <!-- <div class="column has-text-centered">
+      <div class="content">
+        <video id="psg_r0" autoplay controls muted loop playsinline height="100%">
+          <source src="./data/replica_nvs/point_slam_ngd/room0_depth_ps.mp4"
+                  type="video/mp4">
+        </video>
+      </div>
+    </div> -->
+  
+    <div class="column has-text-centered">
+      <div class="content">
+        <video id="ns_r0" autoplay controls muted loop playsinline height="100%">
+          <source src="./data/replica_nvs/nice_slam/room0_depth_ns.mp4"
+                  type="video/mp4">
+        </video>
+        <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+      </div>
+    </div>
+  
+    <div class="column has-text-centered">
+      <div class="content">
+        <video id="ps_r0" autoplay controls muted loop playsinline height="100%">
+          <source src="./data/replica_nvs/point_slam/room0_depth_ps.mp4"
+                  type="video/mp4">
+        </video>
+        <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+      </div>
+    </div>
+  
+    <div class="column has-text-centered">
+      <div class="content">
+        <video id="ss_r0" autoplay controls muted loop playsinline height="100%">
+          <source src="./data/replica_nvs/splatam/room_0_depth.mp4"
+                  type="video/mp4">
+        </video>
+        <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+      </div>
+    </div>
+    </div>
+
+    <h2 class="subtitle has-text-centered">
+      <span>Note: Nice-SLAM & Point-SLAM use ground truth novel view depth for rendering.</span>
+    </h2>
+
+  </div>
+</section>
+
+<section class="hero is-small">
+  <div class="hero-body">
+  <div class="columns is-centered has-text-centered">
+    <div class="column">
+      <h2 class="title is-3">Replica Office 1 Novel View Renderings</h2>
+      <p></p>
+    </div>
+  </div>
+
+  <div class="container is-max-desktop">
+  <div class="columns is-centered">
+     
+  <!-- <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-5">PS (No GT Depth)</h2>
+      <video id="psg_r0" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/replica_nvs/point_slam_ngd/office1_rgb_ps.mp4"
+                type="video/mp4">
+      </video>
+    </div>
+  </div> -->
+
+  <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-5">Nice-SLAM</h2>
+      <video id="ns_r0" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/replica_nvs/nice_slam/office1_rgb_ns.mp4"
+                type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-5">Point-SLAM</h2>
+      <video id="ps_r0" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/replica_nvs/point_slam/office1_rgb_ps.mp4"
+                type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-5">Splat-SLAM</h2>
+      <video id="ss_r0" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/replica_nvs/splatam/office_1_rgb.mp4"
+                type="video/mp4">
+      </video>
+      <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+    </div>
+  </div>
+  </div>
+
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+       
+    <!-- <div class="column has-text-centered">
+      <div class="content">
+        <video id="psg_r0" autoplay controls muted loop playsinline height="100%">
+          <source src="./data/replica_nvs/point_slam_ngd/office1_depth_ps.mp4"
+                  type="video/mp4">
+        </video>
+      </div>
+    </div> -->
+  
+    <div class="column has-text-centered">
+      <div class="content">
+        <video id="ns_r0" autoplay controls muted loop playsinline height="100%">
+          <source src="./data/replica_nvs/nice_slam/office1_depth_ns.mp4"
+                  type="video/mp4">
+        </video>
+        <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+      </div>
+    </div>
+  
+    <div class="column has-text-centered">
+      <div class="content">
+        <video id="ps_r0" autoplay controls muted loop playsinline height="100%">
+          <source src="./data/replica_nvs/point_slam/office1_depth_ps.mp4"
+                  type="video/mp4">
+        </video>
+        <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+      </div>
+    </div>
+  
+    <div class="column has-text-centered">
+      <div class="content">
+        <video id="ss_r0" autoplay controls muted loop playsinline height="100%">
+          <source src="./data/replica_nvs/splatam/office_1_depth.mp4"
+                  type="video/mp4">
+        </video>
+        <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+      </div>
+    </div>
+    </div>
+
+    <h2 class="subtitle has-text-centered">
+      <span>Note: Nice-SLAM & Point-SLAM use ground truth novel view depth for rendering.</span>
+    </h2>
+
+  </div>
+</section>
+
+<section class="hero is-small is-light">
+  <div class="hero-body">
+  <div class="columns is-centered has-text-centered">
+    <div class="column">
+      <h2 class="title is-3">Camera Tracking Optimization</h2>
+      <p></p>
+    </div>
+  </div>
+
+  <div class="container is-max-desktop">
+  <div class="columns is-centered">
+
+  <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-4">Replica R0</h2>
+      <video id="s2_recon" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/track_opt/replica_room0_tracking.mp4"
+                type="video/mp4">
+      </video>
+      <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+    </div>
+  </div>
+
+  <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-4">ScanNet++ S1</h2>
+      <video id="s2_nvs" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/track_opt/scannet_s1_tracking.mp4"
+                type="video/mp4">
+      </video>
+      <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+    </div>
+  </div>
+
+  <div class="column has-text-centered">
+    <div class="content">
+      <h2 class="title is-4">ScanNet++ S2</h2>
+      <video id="s2_nvs" autoplay controls muted loop playsinline height="100%">
+        <source src="./data/track_opt/scannet_s2_tracking.mp4"
+                type="video/mp4">
+      </video>
+      <!-- <img src = "data/viz_gifs/row3_col3.gif"> -->
+    </div>
+  </div>
+
+  </div>
+  </div>
+</section>
+
+<script type="text/javascript">
+  $(function() {
+  var screenWidth = $(window).width();
+  if (screenWidth >= 800) {
+    $('#gpt-video-1').attr('autoplay', 'autoplay');
+  }
+  if (screenWidth >= 800) {
+    $('#gpt-video-2').attr('autoplay', 'autoplay');
+  }
+  if (screenWidth >= 800) {
+    $('#click-query-icl').attr('autoplay', 'autoplay');
+  }
+});
+</script>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+        <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website adapted from the Nerfies templates, which is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            If you use the source code of this website,
+            please link back to the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies source code</a> in your footer.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
