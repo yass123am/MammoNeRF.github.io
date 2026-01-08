@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const modelPaths = [
-      './static/mesh/voxel_volume_rgb.ply',
+      './static/mesh/output_100mb.ply',
     ];
 
     containers.forEach((container, i) => {
