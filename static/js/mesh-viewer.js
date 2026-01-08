@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const viewers = [];
-  const sceneGroups = [[], [], []];
+  const sceneGroups = [[], [], []]; // 3 examples
   window.renderers = [];
   let isUpdating = false;
 
@@ -10,13 +10,14 @@ document.addEventListener("DOMContentLoaded", function () {
       containers.push(document.getElementById(`mesh-container-${i}`));
     }
 
+    // 3 examples × 2 PLY files
     const modelPaths = [
       './static/mesh/output_100mb.ply',
       './static/mesh/density_1.ply',
-      
+
       './static/mesh/output_100mb_2.ply',
       './static/mesh/density_2.ply',
-      
+
       './static/mesh/output_100mb_3.ply',
       './static/mesh/density_3.ply',
     ];
@@ -24,9 +25,12 @@ document.addEventListener("DOMContentLoaded", function () {
     containers.forEach((container, i) => {
       if (!container) return;
 
-      const sceneIndex = Math.floor(i / 2);
-      const viewerIndex = i % 2;
+      // ---- indexing logic ----
+      const sceneIndex = Math.floor(i / 2); // 0,0,1,1,2,2
+      const viewerIndex = i % 2;            // 0 or 1
+      const modelPath = modelPaths[i];
 
+      // ---- THREE.js setup ----
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xffffff);
 
@@ -44,7 +48,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      // Lighting (ambient only is usually best for point clouds)
       scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 
       const viewer = {
@@ -61,23 +64,22 @@ document.addEventListener("DOMContentLoaded", function () {
       sceneGroups[sceneIndex].push(viewer);
       window.renderers.push(renderer);
 
+      // ---- Load PLY ----
       const loader = new THREE.PLYLoader();
       loader.load(
-        modelPaths[i],
+        modelPath,
         geometry => {
           geometry.computeBoundingBox();
 
-          // Center geometry
+          // Center
           const center = geometry.boundingBox.getCenter(new THREE.Vector3());
           geometry.translate(-center.x, -center.y, -center.z);
 
-          // Scale geometry
+          // Scale
           const size = geometry.boundingBox.getSize(new THREE.Vector3());
           const maxDim = Math.max(size.x, size.y, size.z);
-          const targetSize = 1.5;
-          const scale = targetSize / maxDim;
+          const scale = 1.5 / maxDim;
 
-          // Point cloud material
           const material = new THREE.PointsMaterial({
             size: 0.01,
             sizeAttenuation: true,
@@ -89,31 +91,23 @@ document.addEventListener("DOMContentLoaded", function () {
           points.scale.setScalar(scale);
           scene.add(points);
 
-          // Camera setup
-          const radius = 2.5;
-          camera.position.set(radius, radius * 0.5, radius);
+          camera.position.set(2.5, 1.25, 2.5);
           camera.lookAt(0, 0, 0);
           controls.target.set(0, 0, 0);
           controls.update();
         },
         undefined,
         error => {
-          console.error(`Failed to load ${modelPaths[i]}`, error);
-          const fallback = new THREE.Points(
-            new THREE.BufferGeometry().setFromPoints([
-              new THREE.Vector3(0, 0, 0)
-            ]),
-            new THREE.PointsMaterial({ size: 0.1, color: 0xff0000 })
-          );
-          scene.add(fallback);
+          console.error(`Failed to load ${modelPath}`, error);
         }
       );
     });
 
-    setTimeout(setupCameraSync, 1000);
+    setTimeout(setupCameraSync, 500);
     animate();
   }
 
+  // ---- Camera sync within each example ----
   function setupCameraSync() {
     viewers.forEach(viewer => {
       viewer.controls.addEventListener('change', () => {
@@ -128,12 +122,15 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isUpdating) return;
     isUpdating = true;
 
-    const sceneViewers = sceneGroups[sceneIndex];
-    const source = sceneViewers[sourceViewerIndex];
-    if (!source) return;
+    const group = sceneGroups[sceneIndex];
+    const source = group[sourceViewerIndex];
+    if (!source) {
+      isUpdating = false;
+      return;
+    }
 
-    sceneViewers.forEach((viewer, index) => {
-      if (index !== sourceViewerIndex) {
+    group.forEach((viewer, idx) => {
+      if (idx !== sourceViewerIndex) {
         viewer.camera.position.copy(source.camera.position);
         viewer.camera.quaternion.copy(source.camera.quaternion);
         viewer.controls.target.copy(source.controls.target);
@@ -155,14 +152,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.addEventListener('resize', () => {
-    viewers.forEach((viewer, i) => {
-      const container = document.getElementById(`mesh-container-${i + 1}`);
+    viewers.forEach(viewer => {
+      const { container, camera, renderer } = viewer;
       if (container && container.offsetParent !== null) {
         const w = container.clientWidth;
         const h = container.clientHeight;
-        viewer.camera.aspect = w / h;
-        viewer.camera.updateProjectionMatrix();
-        viewer.renderer.setSize(w, h);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
       }
     });
   });
