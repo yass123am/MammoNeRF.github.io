@@ -6,14 +6,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function init() {
     const containers = [];
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 6; i <= 6; i++) {
       containers.push(document.getElementById(`mesh-container-${i}`));
     }
 
     const modelPaths = [
-      './static/mesh/output_100mb_2.ply',
-      './static/mesh/density_2.ply',
       './static/mesh/without_lesion_loss_2.ply',
+      './static/mesh/density_2.ply',
+      './static/mesh/output_100mb_2.ply',
+      './static/mesh/without_lesion_loss_3.ply',
+      './static/mesh/density_3.ply',
+      './static/mesh/output_100mb_3.ply',
+
     ];
 
     containers.forEach((container, i) => {
