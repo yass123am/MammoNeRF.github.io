@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // Point cloud material
           const material = new THREE.PointsMaterial({
-            size: 0.001,
+            size: 0.01,
             sizeAttenuation: true,
             vertexColors: !!geometry.attributes.color,
             color: geometry.attributes.color ? undefined : 0x3366cc
