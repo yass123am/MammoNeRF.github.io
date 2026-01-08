@@ -6,14 +6,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function init() {
     const containers = [];
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 1; i++) {
       containers.push(document.getElementById(`mesh-container-${i}`));
     }
 
     const modelPaths = [
       './static/mesh/output_100mb.ply',
-      './static/mesh/output_100mb_2.ply',
-      './static/mesh/output_100mb_3.ply',
     ];
 
     containers.forEach((container, i) => {
