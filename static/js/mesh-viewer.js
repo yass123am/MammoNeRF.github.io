@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const modelPaths = [
       './static/mesh/output_100mb.ply',
+      './static/mesh/output_100mb_2.ply',
+      './static/mesh/output_100mb_3.ply',
     ];
 
     containers.forEach((container, i) => {
