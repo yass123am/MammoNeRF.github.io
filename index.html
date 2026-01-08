@@ -179,35 +179,25 @@ Quantitative evaluation of novel view synthesis on CBIS-DDSM and INbreast datase
       <h2 class="title is-4 has-text-centered">Qualitative Evaluation</h2>
 
       <!-- Scene 1 -->
-      <div id="scene-1" class="scene-grid active">
+      <div id="scene-1" class="scene-grid">
         <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
-          <div style="height: 70%; text-align: center;">
-            <figure class="qualitative-figure" style="text-align: center; border: 1px solid #ddd;">
-              <img src="./static/mesh/cc+mlo+mask.png">
-            </figure>
-            <p class="has-text-weight-semibold mt-2">Ground-truth: (CC + MLO + Masks)</p>
+          <div style="width: 48%; text-align: center;">
+            <div id="mesh-container-5" style="width: 100%; height: 400px; border: 1px solid #ddd;"></div>
+            <p class="has-text-weight-semibold mt-2">ESLAM</p>
           </div>
           <div style="width: 48%; text-align: center;">
-            <figure class="qualitative-figure" style="text-align: center; border: 1px solid #ddd;">
-              <img src="./static/mesh/nerfmm_results_bb.png">
-            </figure>
-            <p class="has-text-weight-semibold mt-2">NeRFmm</p>
+            <div id="mesh-container-6" style="width: 100%; height: 400px; border: 1px solid #ddd;"></div>
+            <p class="has-text-weight-semibold mt-2">PDNet-ESLAM</p>
           </div>
           <div style="width: 48%; text-align: center;">
-            <figure class="qualitative-figure" style="text-align: center; border: 1px solid #ddd;">
-              <img src="./static/mesh/Mamo_results_bb.png">
-            </figure>
-            <p class="has-text-weight-semibold mt-2">MammoNeRF (ours)</p>
+            <div id="mesh-container-7" style="width: 100%; height: 400px; border: 1px solid #ddd;"></div>
+            <p class="has-text-weight-semibold mt-2">MirrorESLAM (ours)</p>
           </div>
           <div style="width: 48%; text-align: center;">
-            <div id="mesh-container-1" style="width: 100%; height: 400px; border: 1px solid #ddd;"></div>
-            <p class="has-text-weight-semibold mt-2">3D Volume</p>
+            <div id="mesh-container-8" style="width: 100%; height: 400px; border: 1px solid #ddd;"></div>
+            <p class="has-text-weight-semibold mt-2">Ground Truth</p>
           </div>
-          <div style="width: 48%; text-align: center;">
-            <div id="mesh-container-2" style="width: 100%; height: 400px; border: 1px solid #ddd;"></div>
-            <p class="has-text-weight-semibold mt-2">3D Density</p>
-          </div>
-        </div>  
+        </div>
       </div>
 
       <!-- Scene 2 -->
