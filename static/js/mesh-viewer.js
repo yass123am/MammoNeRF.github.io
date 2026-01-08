@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const camera = new THREE.PerspectiveCamera(
         60,
         container.clientWidth / container.clientHeight,
-        0.01,
+        0.001,
         100
       );
       camera.position.set(0, 0, 2);
