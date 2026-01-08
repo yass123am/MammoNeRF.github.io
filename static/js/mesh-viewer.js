@@ -13,17 +13,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const modelPaths = [
       './static/mesh/output_100mb.ply',
       './static/mesh/density_1.ply',
+      
       './static/mesh/output_100mb_2.ply',
-      './static/mesh/density_2.ply'
-      './static/mesh/output_100mb_3.ply',,
+      './static/mesh/density_2.ply',
+      
+      './static/mesh/output_100mb_3.ply',
       './static/mesh/density_3.ply',
     ];
 
     containers.forEach((container, i) => {
       if (!container) return;
 
-      const sceneIndex = Math.floor(i / 6);
-      const viewerIndex = i % 6;
+      const sceneIndex = Math.floor(i / 2);
+      const viewerIndex = i % 2;
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xffffff);
