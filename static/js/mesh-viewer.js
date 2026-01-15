@@ -17,9 +17,9 @@ document.addEventListener("DOMContentLoaded", function () {
       './static/mesh/without_lesion_loss_3.ply',
       './static/mesh/density_3.ply',
       './static/mesh/output_100mb_3.ply',
-      './static/mesh/without_lesion_loss_3.ply',
-      './static/mesh/density_3.ply',
-      './static/mesh/output_100mb_3.ply',
+      './static/mesh/voxel_volume_rgb.ply',
+      './static/mesh/density_1.ply',
+      './static/mesh/output_100mb.ply',
     ];
 
     containers.forEach((container, i) => {
