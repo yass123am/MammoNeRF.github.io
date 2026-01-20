@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!container) return;
 
       const sceneIndex = Math.floor(i / 4);
-      const viewerIndex = i % 4;
+      const viewerIndex = i % 3;
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xffffff);
