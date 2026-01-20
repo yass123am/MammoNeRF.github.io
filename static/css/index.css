@@ -172,3 +172,12 @@ body {
   margin-top: 25px ;
   /* margin-bottom: 100px; */
 }
+.container {
+  max-width: 70vw !important;
+  width: 70vw !important;
+}
+
+.section {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
