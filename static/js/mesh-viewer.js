@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function init() {
     const containers = [];
-    for (let i = 1; i <= 9; i++) {
+    for (let i = 1; i <= 12; i++) {
       containers.push(document.getElementById(`mesh-container-${i}`));
     }
 
@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
     containers.forEach((container, i) => {
       if (!container) return;
 
-      const sceneIndex = Math.floor(i / 3);
-      const viewerIndex = i % 3;
+      const sceneIndex = Math.floor(i / 4);
+      const viewerIndex = i % 4;
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xffffff);
