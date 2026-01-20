@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
     containers.forEach((container, i) => {
       if (!container) return;
 
-      const sceneIndex = Math.floor(i / 3);
-      const viewerIndex = i % 3;
+      const sceneIndex = Math.floor(i / 4);
+      const viewerIndex = i % 4;
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xffffff);
