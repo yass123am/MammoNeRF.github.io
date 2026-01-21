@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const modelPaths = [
-      './static/mesh/voxel_volume_rgb_NeRF_2.ply',
-      './static/mesh/without_lesion_loss_2.ply',
+      './static/mesh/voxel_volume_density_nerf_2.ply',
+      './static/mesh/voxel_volume_density_nerfmm_2.ply',
       './static/mesh/output_100mb_2.ply',
       './static/mesh/voxel_volume_density_nerf_2.ply',
       './static/mesh/voxel_volume_density_nerfmm_2.ply',
