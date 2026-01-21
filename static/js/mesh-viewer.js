@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
       './static/mesh/voxel_volume_rgb.ply',
       './static/mesh/output_100mb.ply',
       './static/mesh/density_1.ply',
-      './static/mesh/density_1.ply',
+      './static/mesh/voxel_volume_density_nerfmm_3.ply',
       './static/mesh/density_1.ply',
     ];
 
