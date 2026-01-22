@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const camera = new THREE.PerspectiveCamera(
         60,
         container.clientWidth / container.clientHeight,
-        0.001,
+        0.0001,
         1000
       );
 
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // Point cloud material
           const material = new THREE.PointsMaterial({
-            size: 0.01,
+            size: 0.001,
             sizeAttenuation: true,
             vertexColors: !!geometry.attributes.color,
             color: geometry.attributes.color ? undefined : 0x3366cc
