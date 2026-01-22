@@ -181,3 +181,24 @@ body {
   padding-left: 2rem;
   padding-right: 2rem;
 }
+/* Scene visibility control */
+.scene-grid {
+  display: none;
+}
+
+.scene-grid.active {
+  display: block;
+}
+
+/* Ensure 3D containers render properly */
+[id^="mesh-container-"] {
+  position: relative;
+  overflow: hidden;
+}
+
+[id^="mesh-container-"] canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
