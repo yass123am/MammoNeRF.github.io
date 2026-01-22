@@ -173,8 +173,8 @@ body {
   /* margin-bottom: 100px; */
 }
 .container {
-  max-width: 70vw !important;
-  width: 70vw !important;
+  max-width: 100vw !important;
+  width: 100vw !important;
 }
 
 .section {
