@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function init() {
     const containers = [];
-    for (let i = 1; i <= 18; i++) {
+    for (let i = 1; i <= 9; i++) {
       containers.push(document.getElementById(`mesh-container-${i}`));
     }
 
@@ -14,28 +14,19 @@ document.addEventListener("DOMContentLoaded", function () {
       './static/mesh/voxel_volume_rgb_nerf_3.ply',
       './static/mesh/without_lesion_loss_3.ply',
       './static/mesh/output_100mb_3.ply',
-      './static/mesh/voxel_volume_density_nerf_3.ply',
-      './static/mesh/voxel_volume_density_nerfmm_3.ply',
-      './static/mesh/density_3.ply',
       './static/mesh/voxel_volume_rgb_NeRF_2.ply',
       './static/mesh/without_lesion_loss_2.ply',
-      './static/mesh/output_100mb_2.ply',
-      './static/mesh/voxel_volume_density_nerf_2.ply',
-      './static/mesh/voxel_volume_density_nerfmm_2.ply',
-      './static/mesh/density_2.ply',
+      './static/mesh/output_100mb_2.ply',,
       './static/mesh/voxel_volume_rgb_nerf_1.ply',
       './static/mesh/voxel_volume_rgb.ply',
       './static/mesh/output_100mb.ply',
-      './static/mesh/voxel_volume_density_nerf_1.ply',
-      './static/mesh/voxel_volume_density_nerfmm_1.ply',
-      './static/mesh/density_1.ply',
     ];
 
     containers.forEach((container, i) => {
       if (!container) return;
 
-      const sceneIndex = Math.floor(i / 6);
-      const viewerIndex = i % 6;
+      const sceneIndex = Math.floor(i / 3);
+      const viewerIndex = i % 3;
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xffffff);
@@ -43,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const camera = new THREE.PerspectiveCamera(
         60,
         container.clientWidth / container.clientHeight,
-        0.0001,
+        0.001,
         1000
       );
 
@@ -89,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // Point cloud material
           const material = new THREE.PointsMaterial({
-            size: 0.001,
+            size: 0.01,
             sizeAttenuation: true,
             vertexColors: !!geometry.attributes.color,
             color: geometry.attributes.color ? undefined : 0x3366cc
