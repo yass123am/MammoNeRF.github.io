@@ -60,7 +60,7 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-2 publication-title">MammoNeRF: Neural Radiance Fields for Mammography Imaging</h1>
+          <h1 class="title is-2 publication-title">MammoNeRF: Neural Radiance Fields for Mammography Imaging (MIDL 2026)</h1>
           <div class="is-size-6 publication-authors">
             
           </div>
@@ -144,7 +144,7 @@
           <div style="height: 28%; width: 50%; text-align: center;">
             <p class="has-text-weight-semibold mt-2" style="color: #003366; font-size: 18px;"> PSNR curves</p>
             <figure class="qualitative-figure" style="text-align: center; border: 1px solid #ddd;">
-              <img src="./static/images/psnr_1.png" style="height: 350px; width: 600px; object-fit: contain;">
+              <img src="./static/images/psnr_1.png" style="height: 350px; width: 400px; object-fit: contain;">
             </figure>
           </div>
         </div>
@@ -209,6 +209,22 @@
           </div>
         </div>
       </div>
+
+<section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+            We propose a novel approach for reconstructing a 3D volumetric representation of breast tissue from 2D mammograms (CC and MLO). MammoNeRF is trained CC and MLO views annotated with the corresponding binary lesion masks. To enforce cross-view alignment, we introduce a lesion consistency loss in addition to the photometric loss, encouraging the model to estimate consistent poses across both views. This enables the reconstruction of pseudo ground-truth 3D lesion bounding boxes (3DPB) and 3D volumetric breast representations. Without this constraint, traditional NeRF models tend to reconstruct the same lesion at inconsistent spatial locations across views, resulting in incoherent lesion geometry. MammoNeRF jointly optimizes NeRF parameters, camera poses, and lesion centroids within a unified framework.            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
       
     </div>
   </div>
