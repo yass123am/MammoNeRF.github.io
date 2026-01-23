@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
       './static/mesh/output_100mb_3.ply',
       './static/mesh/voxel_volume_rgb_NeRF_2.ply',
       './static/mesh/without_lesion_loss_2.ply',
-      './static/mesh/output_100mb_2.ply',,
+      './static/mesh/output_100mb_2.ply',
       './static/mesh/voxel_volume_rgb_nerf_1.ply',
       './static/mesh/voxel_volume_rgb.ply',
       './static/mesh/output_100mb.ply',
